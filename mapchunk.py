@@ -19,7 +19,7 @@ class MapChunk:
 
     def __init__(self, map_seed:int, pos:tuple[int, int]) -> None:
         self.pos = pos
-        self.seed = (map_seed + pos[0] + (pos[1] >> 8)) % 2 ** 16
+        self.seed = (map_seed + pos[0] + (pos[1] << 8)) % 2 ** 16
         self.perlin = get_perlin_noise(self.seed, (16, 16))
 
     def get_neighbors(self, chunklist:list):
