@@ -1,23 +1,23 @@
 import pygame
-from pygame import Vector2
+from pygame.math import Vector2
 from pygame import transform
 from pygame.locals import *
 from sys import exit
-from mapchunk import *
+from mapchunk import MapChunk
 
 pygame.init()
-screen = pygame.display.set_mode((0, 0))
+screen = pygame.display.set_mode((800, 450))
 res = pygame.math.Vector2(pygame.display.get_window_size())
 clock = pygame.time.Clock()
 
 seed = 69
 
-chunks:list[MapChunk] = []
-chunks.append(MapChunk(seed, (0, 0)))
-chunks.append(MapChunk(seed, (1, 0)))
+chunks = set()
+MapChunk(chunks, seed, (0, 0))
+MapChunk(chunks, seed, (1, 0))
 
 for chunk in chunks:
-    chunk.generate()
+    chunk.step()
 
 txt_size = 48
 textures = {
@@ -35,7 +35,8 @@ def draw_chunk(chunk):
             else:
                 screen.blit(textures["stone"], rect)
 
-
+delta:float = 0
+tick:int = 0
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -47,9 +48,12 @@ while True:
         keys_pressed = pygame.key.get_pressed()
         
         for chunk in chunks:
-            if chunk.generated:
-                draw_chunk(chunk)
+            if tick % 180 == 0:
+                chunk.step()
+            draw_chunk(chunk)
         
         pygame.display.update()
         screen.fill((0, 0, 0))
-        clock.tick(60)
+        delta = clock.tick(60)
+        tick += 1
+        print(tick)
